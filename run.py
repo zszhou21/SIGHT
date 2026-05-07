@@ -99,7 +99,8 @@ def run_tta(args):
 
     sight = SIGHT(
         model, args.device, args.num_classes,
-        eta_mu=args.eta_mu, beta=args.beta, eta_h=args.eta_h, tau=args.tau,
+        eta_mu=args.eta_mu, omega_mu=args.omega_mu,
+        beta=args.beta, eta_h=args.eta_h, tau=args.tau,
     )
     tta_preds = []
     for i in range(len(x)):
@@ -147,10 +148,11 @@ def main():
     parser.add_argument("--lr", type=float, default=0.001)
 
     # SIGHT hyperparameters
-    parser.add_argument("--eta-mu", type=float, default=0.01, help="Prototype evolution rate")
+    parser.add_argument("--eta-mu", type=float, default=0.005, help="Prototype evolution rate")
+    parser.add_argument("--omega-mu", type=float, default=0.01, help="Source-prototype anchor rate")
     parser.add_argument("--beta", type=float, default=1.0, help="Surprise sensitivity")
     parser.add_argument("--eta-h", type=float, default=0.05, help="Habit-vector learning rate")
-    parser.add_argument("--tau", type=float, default=0.2, help="KVA temperature")
+    parser.add_argument("--tau", type=float, default=0.05, help="KVA temperature")
 
     # Labels (comma-separated)
     parser.add_argument("--labels", type=str, default="cycling_like,lying,sitting,standing,walking_like",

@@ -7,11 +7,15 @@ from src.cnn import SimpleHARCNN
 
 
 class SIGHT:
-    def __init__(self, model, device, num_classes, eta_mu=0.01, beta=1.0, eta_h=0.05, tau=0.2, eps=1e-8):
+    def __init__(
+        self, model, device, num_classes, eta_mu=0.01, omega_mu=0.01,
+        beta=1.0, eta_h=0.05, tau=0.2, eps=1e-8
+    ):
         self.model = model
         self.device = device
         self.K = num_classes
         self.eta_mu = eta_mu
+        self.omega_mu = omega_mu
         self.beta = beta
         self.eta_h = eta_h
         self.tau = tau
@@ -58,10 +62,9 @@ class SIGHT:
         if self.q_prev is not None:
             self.h = (1.0 - self.eta_h) * self.h + self.eta_h * self.q_prev
 
-        anchor = 0.01
         for k in range(self.K):
             updated = (1.0 - self.eta_mu * q[k]) * self.mu[k] + self.eta_mu * q[k] * z_vec
-            updated = (1.0 - anchor) * updated + anchor * self.mu_source[k]
+            updated = (1.0 - self.omega_mu) * updated + self.omega_mu * self.mu_source[k]
             self.mu[k] = F.normalize(updated, p=2, dim=0)
 
         self.q_prev = q.clone()
